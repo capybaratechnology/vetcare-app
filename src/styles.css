@@ -2,196 +2,196 @@
    light surfaces become dark ones, text becomes light, accents are lifted. */
 :root {
   color-scheme: light;
-  --c-155a47: #155a47;
-  --c-17463330: #17463330;
-  --c-176b55: #176b55;
-  --c-197356: #197356;
-  --c-1e6b41: #1e6b41;
-  --c-1f443821: #1f443821;
-  --c-226449: #226449;
-  --c-253d35: #253d35;
-  --c-344b42: #344b42;
-  --c-357e5f: #357e5f;
-  --c-435b4e: #435b4e;
-  --c-43a36b: #43a36b;
-  --c-48876b: #48876b;
-  --c-527c65: #527c65;
-  --c-568474: #568474;
-  --c-5c4300: #5c4300;
+  --c-155a47: #08134f;
+  --c-17463330: #0b1a6e30;
+  --c-176b55: #0b1a6e;
+  --c-197356: #ef2414;
+  --c-1e6b41: #035a24;
+  --c-1f443821: #0b1a6e21;
+  --c-226449: #222c64;
+  --c-253d35: #25293d;
+  --c-344b42: #34374b;
+  --c-357e5f: #35407e;
+  --c-435b4e: #43475b;
+  --c-43a36b: #047831;
+  --c-48876b: #485287;
+  --c-527c65: #52587c;
+  --c-568474: #565d84;
+  --c-5c4300: #4a1f00;
   --c-5d6a8d: #5d6a8d;
-  --c-61746a: #61746a;
-  --c-62796d: #62796d;
-  --c-657671: #657671;
-  --c-65796c: #65796c;
-  --c-667a6d: #667a6d;
-  --c-697b77: #697b77;
-  --c-698779: #698779;
-  --c-6a7d73: #6a7d73;
-  --c-6a8677: #6a8677;
-  --c-6d7f74: #6d7f74;
-  --c-71817c: #71817c;
-  --c-719f8e: #719f8e;
-  --c-72817e: #72817e;
-  --c-738276: #738276;
-  --c-738779: #738779;
-  --c-758476: #758476;
-  --c-75857d: #75857d;
-  --c-77877a: #77877a;
-  --c-78877b: #78877b;
-  --c-7c8a81: #7c8a81;
+  --c-61746a: #616474;
+  --c-62796d: #626579;
+  --c-657671: #656876;
+  --c-65796c: #656879;
+  --c-667a6d: #66697a;
+  --c-697b77: #696c7b;
+  --c-698779: #696e87;
+  --c-6a7d73: #6a6d7d;
+  --c-6a8677: #6a6e86;
+  --c-6d7f74: #6d707f;
+  --c-71817c: #717381;
+  --c-719f8e: #71789f;
+  --c-72817e: #727481;
+  --c-738276: #737582;
+  --c-738779: #737687;
+  --c-758476: #757784;
+  --c-75857d: #757785;
+  --c-77877a: #777987;
+  --c-78877b: #787a87;
+  --c-7c8a81: #7c7e8a;
   --c-805f27: #805f27;
-  --c-80a997: #80a997;
-  --c-87938e: #87938e;
-  --c-8aac9b: #8aac9b;
-  --c-8b9992: #8b9992;
+  --c-80a997: #8086a9;
+  --c-87938e: #878993;
+  --c-8aac9b: #8a8fac;
+  --c-8b9992: #8b8d99;
   --c-9b5151: #9b5151;
-  --c-9fb3a7: #9fb3a7;
-  --c-accdbd: #accdbd;
-  --c-b4d9c7: #b4d9c7;
+  --c-9fb3a7: #9fa2b3;
+  --c-accdbd: #acb1cd;
+  --c-b4d9c7: #b4bad9;
   --c-b55235: #b55235;
   --c-b68842: #b68842;
-  --c-b8c2be: #b8c2be;
-  --c-b8dccc: #b8dccc;
-  --c-cae2d7: #cae2d7;
-  --c-cdebd8: #cdebd8;
-  --c-d4a557: #d4a557;
-  --c-d6e7da: #d6e7da;
-  --c-d7e8df: #d7e8df;
-  --c-dca440: #dca440;
-  --c-dceae0: #dceae0;
-  --c-dfa93f: #dfa93f;
-  --c-dfe6e2: #dfe6e2;
-  --c-e0eae2: #e0eae2;
-  --c-e1e9e4: #e1e9e4;
-  --c-e1eae4: #e1eae4;
-  --c-e2e9e5: #e2e9e5;
-  --c-e2ece4: #e2ece4;
-  --c-e3e9e6: #e3e9e6;
-  --c-e5ebe6: #e5ebe6;
-  --c-e5ebe8: #e5ebe8;
-  --c-e6f3ed: #e6f3ed;
-  --c-e7f3ee: #e7f3ee;
-  --c-e8ede9: #e8ede9;
-  --c-e8f1eb: #e8f1eb;
-  --c-e8f3ed: #e8f3ed;
-  --c-e8f5ec: #e8f5ec;
-  --c-e9eee8: #e9eee8;
-  --c-edf0ee: #edf0ee;
-  --c-edf1ef: #edf1ef;
-  --c-edf2ec: #edf2ec;
-  --c-edf5ef: #edf5ef;
+  --c-b8c2be: #b8bac2;
+  --c-b8dccc: #b8bddc;
+  --c-cae2d7: #cacee2;
+  --c-cdebd8: #cfe9d8;
+  --c-d4a557: #ef2414;
+  --c-d6e7da: #d6d9e7;
+  --c-d7e8df: #d7dae8;
+  --c-dca440: #ef2414;
+  --c-dceae0: #dcdeea;
+  --c-dfa93f: #f17f1f;
+  --c-dfe6e2: #dfe0e6;
+  --c-e0eae2: #e0e2ea;
+  --c-e1e9e4: #e1e2e9;
+  --c-e1eae4: #e1e2ea;
+  --c-e2e9e5: #e2e3e9;
+  --c-e2ece4: #e2e4ec;
+  --c-e3e9e6: #e3e4e9;
+  --c-e5ebe6: #e5e6eb;
+  --c-e5ebe8: #e5e6eb;
+  --c-e6f3ed: #e6e8f3;
+  --c-e7f3ee: #e7e9f3;
+  --c-e8ede9: #e8e9ed;
+  --c-e8f1eb: #e8e9f1;
+  --c-e8f3ed: #e8eaf3;
+  --c-e8f5ec: #e6f4ea;
+  --c-e9eee8: #e8e9ee;
+  --c-edf0ee: #ededf0;
+  --c-edf1ef: #edeef1;
+  --c-edf2ec: #ecedf2;
+  --c-edf5ef: #edeef5;
   --c-eef1f8: #eef1f8;
-  --c-f0f5f2: #f0f5f2;
+  --c-f0f5f2: #f0f1f5;
   --c-f3e6c6: #f3e6c6;
-  --c-f3f7f4: #f3f7f4;
-  --c-f3f8f5: #f3f8f5;
-  --c-f4f6f5: #f4f6f5;
-  --c-f4f7f3: #f4f7f3;
+  --c-f3f7f4: #f3f4f7;
+  --c-f3f8f5: #f3f4f8;
+  --c-f4f6f5: #f4f4f6;
+  --c-f4f7f3: #f3f4f7;
   --c-f6eddb: #f6eddb;
-  --c-f9c74f: #f9c74f;
+  --c-f9c74f: #f17f1f;
   --c-faeceb: #faeceb;
-  --c-fafcfb: #fafcfb;
-  --c-fde9a6: #fde9a6;
-  --c-fff8e1: #fff8e1;
+  --c-fafcfb: #fafafc;
+  --c-fde9a6: #fdd9b8;
+  --c-fff8e1: #fff0e3;
   --c-fff8e8: #fff8e8;
   --c-ffffff: #ffffff;
   --c-ffffff70: #ffffff70;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --c-155a47: #50c9a7;
+  --c-155a47: #3d55dc;
   --c-17463330: #00000030;
-  --c-176b55: #4dcbaa;
-  --c-197356: #4ecba3;
-  --c-1e6b41: #55c387;
+  --c-176b55: #7b8ff7;
+  --c-197356: #df3224;
+  --c-1e6b41: #31e776;
   --c-1f443821: #00000021;
-  --c-226449: #5cbc95;
-  --c-253d35: #d5dedb;
-  --c-344b42: #d0d8d5;
-  --c-357e5f: #76bd9f;
-  --c-435b4e: #cad1cd;
-  --c-43a36b: #97ceae;
-  --c-48876b: #9dbbae;
-  --c-527c65: #a2b7ab;
-  --c-568474: #9bb2aa;
-  --c-5c4300: #eeb92b;
+  --c-226449: #5c6bbc;
+  --c-253d35: #d5d6de;
+  --c-344b42: #d0d1d8;
+  --c-357e5f: #7681bd;
+  --c-435b4e: #cacbd1;
+  --c-43a36b: #3fbf6e;
+  --c-48876b: #9da2bb;
+  --c-527c65: #a2a5b7;
+  --c-568474: #9b9fb2;
+  --c-5c4300: #ee7c2b;
   --c-5d6a8d: #9399aa;
-  --c-61746a: #a4aea9;
-  --c-62796d: #a0aca6;
-  --c-657671: #a2aaa8;
-  --c-65796c: #a0a9a3;
-  --c-667a6d: #9ea8a2;
-  --c-697b77: #9da6a4;
-  --c-698779: #94a39c;
-  --c-6a7d73: #9ba5a0;
-  --c-6a8677: #94a29b;
-  --c-6d7f74: #99a29c;
-  --c-71817c: #969e9c;
-  --c-719f8e: #7e998f;
-  --c-72817e: #969e9c;
-  --c-738276: #959d97;
-  --c-738779: #919b94;
-  --c-758476: #939b94;
-  --c-75857d: #929a96;
-  --c-77877a: #909892;
-  --c-78877b: #909892;
-  --c-7c8a81: #8d948f;
+  --c-61746a: #a4a6ae;
+  --c-62796d: #a0a2ac;
+  --c-657671: #a2a3aa;
+  --c-65796c: #a0a1a9;
+  --c-667a6d: #9ea0a8;
+  --c-697b77: #9d9ea6;
+  --c-698779: #9496a3;
+  --c-6a7d73: #9b9da5;
+  --c-6a8677: #9496a2;
+  --c-6d7f74: #999aa2;
+  --c-71817c: #96979e;
+  --c-719f8e: #7e8299;
+  --c-72817e: #96979e;
+  --c-738276: #95969d;
+  --c-738779: #91939b;
+  --c-758476: #93949b;
+  --c-75857d: #92939a;
+  --c-77877a: #909198;
+  --c-78877b: #909198;
+  --c-7c8a81: #8d8e94;
   --c-805f27: #c4a062;
-  --c-80a997: #708e81;
-  --c-87938e: #838a87;
-  --c-8aac9b: #6c8578;
-  --c-8b9992: #7d8681;
+  --c-80a997: #70758e;
+  --c-87938e: #83848a;
+  --c-8aac9b: #6c7085;
+  --c-8b9992: #7d7e86;
   --c-9b5151: #b08b8b;
-  --c-9fb3a7: #637269;
-  --c-accdbd: #4a6457;
-  --c-b4d9c7: #3e5c4d;
+  --c-9fb3a7: #636572;
+  --c-accdbd: #4a4e64;
+  --c-b4d9c7: #3e435c;
   --c-b55235: #d69f8f;
   --c-b68842: #d1b994;
-  --c-b8c2be: #525a57;
-  --c-b8dccc: #3a584b;
-  --c-cae2d7: #3d4a44;
-  --c-cdebd8: #35473c;
-  --c-d4a557: #cba360;
-  --c-d6e7da: #364139;
-  --c-d7e8df: #35413b;
-  --c-dca440: #d0a14c;
-  --c-dceae0: #333d36;
-  --c-dfa93f: #d3a54b;
-  --c-dfe6e2: #363b38;
-  --c-e0eae2: #323a34;
-  --c-e1e9e4: #333935;
-  --c-e1eae4: #323934;
-  --c-e2e9e5: #333835;
-  --c-e2ece4: #303832;
-  --c-e3e9e6: #333735;
-  --c-e5ebe6: #313632;
-  --c-e5ebe8: #313633;
-  --c-e6f3ed: #293530;
-  --c-e7f3ee: #293430;
-  --c-e8ede9: #2f3330;
-  --c-e8f1eb: #2b332e;
-  --c-e8f3ed: #29332e;
-  --c-e8f5ec: #27342b;
-  --c-e9eee8: #2f332e;
-  --c-edf0ee: #2c2f2d;
-  --c-edf1ef: #2b2f2d;
-  --c-edf2ec: #2b302a;
-  --c-edf5ef: #273029;
+  --c-b8c2be: #52545a;
+  --c-b8dccc: #3a3f58;
+  --c-cae2d7: #3d3f4a;
+  --c-cdebd8: #36463c;
+  --c-d4a557: #df3224;
+  --c-d6e7da: #363841;
+  --c-d7e8df: #353741;
+  --c-dca440: #df3224;
+  --c-dceae0: #33343d;
+  --c-dfa93f: #e1802f;
+  --c-dfe6e2: #36373b;
+  --c-e0eae2: #32343a;
+  --c-e1e9e4: #333439;
+  --c-e1eae4: #323339;
+  --c-e2e9e5: #333438;
+  --c-e2ece4: #303238;
+  --c-e3e9e6: #333437;
+  --c-e5ebe6: #313236;
+  --c-e5ebe8: #313236;
+  --c-e6f3ed: #292b35;
+  --c-e7f3ee: #292b34;
+  --c-e8ede9: #2f3033;
+  --c-e8f1eb: #2b2c33;
+  --c-e8f3ed: #292b33;
+  --c-e8f5ec: #28352c;
+  --c-e9eee8: #2e2f33;
+  --c-edf0ee: #2c2c2f;
+  --c-edf1ef: #2b2c2f;
+  --c-edf2ec: #2a2b30;
+  --c-edf5ef: #272830;
   --c-eef1f8: #23272f;
-  --c-f0f5f2: #272d29;
+  --c-f0f5f2: #27282d;
   --c-f3e6c6: #4c4430;
-  --c-f3f7f4: #252a26;
-  --c-f3f8f5: #242b26;
-  --c-f4f6f5: #262928;
-  --c-f4f7f3: #262a25;
+  --c-f3f7f4: #25262a;
+  --c-f3f8f5: #24252b;
+  --c-f4f6f5: #262629;
+  --c-f4f7f3: #25262a;
   --c-f6eddb: #3e3628;
-  --c-f9c74f: #ecc25c;
+  --c-f9c74f: #e1802f;
   --c-faeceb: #332221;
-  --c-fafcfb: #1f2522;
-  --c-fde9a6: #f6e5ad;
-  --c-fff8e1: #3c341d;
+  --c-fafcfb: #1f1f25;
+  --c-fde9a6: #543f2a;
+  --c-fff8e1: #3a2a1c;
   --c-fff8e8: #372f1b;
-  --c-ffffff: #1a1f1d;
+  --c-ffffff: #1a1c27;
   --c-ffffff70: #211c1c70;
 }
 :root {
@@ -248,6 +248,8 @@ small {
   padding: 28px 18px;
   position: fixed;
   inset: 0 auto 0 0;
+  /* Short screens (e.g. 14" laptops): scroll instead of cutting off options. */
+  overflow-y: auto;
 }
 .brand {
   display: flex;
@@ -1934,115 +1936,535 @@ a:focus-visible {
   width: 100%;
 }
 /* Dark mode: brand panels keep their light-mode colors (white text, pale accents)
-   on a deeper green instead of the lifted accent green. */
+   on a deeper navy instead of the lifted accent. */
 :root[data-theme='dark'] .login-story,
 :root[data-theme='dark'] .care-card,
 :root[data-theme='dark'] .booking-banner {
-  --c-155a47: #155a47;
-  --c-17463330: #17463330;
-  --c-176b55: #176b55;
-  --c-197356: #197356;
-  --c-1e6b41: #1e6b41;
-  --c-1f443821: #1f443821;
-  --c-226449: #226449;
-  --c-253d35: #253d35;
-  --c-344b42: #344b42;
-  --c-357e5f: #357e5f;
-  --c-435b4e: #435b4e;
-  --c-43a36b: #43a36b;
-  --c-48876b: #48876b;
-  --c-527c65: #527c65;
-  --c-568474: #568474;
-  --c-5c4300: #5c4300;
+  --c-155a47: #08134f;
+  --c-17463330: #0b1a6e30;
+  --c-176b55: #0b1a6e;
+  --c-197356: #ef2414;
+  --c-1e6b41: #035a24;
+  --c-1f443821: #0b1a6e21;
+  --c-226449: #222c64;
+  --c-253d35: #25293d;
+  --c-344b42: #34374b;
+  --c-357e5f: #35407e;
+  --c-435b4e: #43475b;
+  --c-43a36b: #047831;
+  --c-48876b: #485287;
+  --c-527c65: #52587c;
+  --c-568474: #565d84;
+  --c-5c4300: #4a1f00;
   --c-5d6a8d: #5d6a8d;
-  --c-61746a: #61746a;
-  --c-62796d: #62796d;
-  --c-657671: #657671;
-  --c-65796c: #65796c;
-  --c-667a6d: #667a6d;
-  --c-697b77: #697b77;
-  --c-698779: #698779;
-  --c-6a7d73: #6a7d73;
-  --c-6a8677: #6a8677;
-  --c-6d7f74: #6d7f74;
-  --c-71817c: #71817c;
-  --c-719f8e: #719f8e;
-  --c-72817e: #72817e;
-  --c-738276: #738276;
-  --c-738779: #738779;
-  --c-758476: #758476;
-  --c-75857d: #75857d;
-  --c-77877a: #77877a;
-  --c-78877b: #78877b;
-  --c-7c8a81: #7c8a81;
+  --c-61746a: #616474;
+  --c-62796d: #626579;
+  --c-657671: #656876;
+  --c-65796c: #656879;
+  --c-667a6d: #66697a;
+  --c-697b77: #696c7b;
+  --c-698779: #696e87;
+  --c-6a7d73: #6a6d7d;
+  --c-6a8677: #6a6e86;
+  --c-6d7f74: #6d707f;
+  --c-71817c: #717381;
+  --c-719f8e: #71789f;
+  --c-72817e: #727481;
+  --c-738276: #737582;
+  --c-738779: #737687;
+  --c-758476: #757784;
+  --c-75857d: #757785;
+  --c-77877a: #777987;
+  --c-78877b: #787a87;
+  --c-7c8a81: #7c7e8a;
   --c-805f27: #805f27;
-  --c-80a997: #80a997;
-  --c-87938e: #87938e;
-  --c-8aac9b: #8aac9b;
-  --c-8b9992: #8b9992;
+  --c-80a997: #8086a9;
+  --c-87938e: #878993;
+  --c-8aac9b: #8a8fac;
+  --c-8b9992: #8b8d99;
   --c-9b5151: #9b5151;
-  --c-9fb3a7: #9fb3a7;
-  --c-accdbd: #accdbd;
-  --c-b4d9c7: #b4d9c7;
+  --c-9fb3a7: #9fa2b3;
+  --c-accdbd: #acb1cd;
+  --c-b4d9c7: #b4bad9;
   --c-b55235: #b55235;
   --c-b68842: #b68842;
-  --c-b8c2be: #b8c2be;
-  --c-b8dccc: #b8dccc;
-  --c-cae2d7: #cae2d7;
-  --c-cdebd8: #cdebd8;
-  --c-d4a557: #d4a557;
-  --c-d6e7da: #d6e7da;
-  --c-d7e8df: #d7e8df;
-  --c-dca440: #dca440;
-  --c-dceae0: #dceae0;
-  --c-dfa93f: #dfa93f;
-  --c-dfe6e2: #dfe6e2;
-  --c-e0eae2: #e0eae2;
-  --c-e1e9e4: #e1e9e4;
-  --c-e1eae4: #e1eae4;
-  --c-e2e9e5: #e2e9e5;
-  --c-e2ece4: #e2ece4;
-  --c-e3e9e6: #e3e9e6;
-  --c-e5ebe6: #e5ebe6;
-  --c-e5ebe8: #e5ebe8;
-  --c-e6f3ed: #e6f3ed;
-  --c-e7f3ee: #e7f3ee;
-  --c-e8ede9: #e8ede9;
-  --c-e8f1eb: #e8f1eb;
-  --c-e8f3ed: #e8f3ed;
-  --c-e8f5ec: #e8f5ec;
-  --c-e9eee8: #e9eee8;
-  --c-edf0ee: #edf0ee;
-  --c-edf1ef: #edf1ef;
-  --c-edf2ec: #edf2ec;
-  --c-edf5ef: #edf5ef;
+  --c-b8c2be: #b8bac2;
+  --c-b8dccc: #b8bddc;
+  --c-cae2d7: #cacee2;
+  --c-cdebd8: #cfe9d8;
+  --c-d4a557: #ef2414;
+  --c-d6e7da: #d6d9e7;
+  --c-d7e8df: #d7dae8;
+  --c-dca440: #ef2414;
+  --c-dceae0: #dcdeea;
+  --c-dfa93f: #f17f1f;
+  --c-dfe6e2: #dfe0e6;
+  --c-e0eae2: #e0e2ea;
+  --c-e1e9e4: #e1e2e9;
+  --c-e1eae4: #e1e2ea;
+  --c-e2e9e5: #e2e3e9;
+  --c-e2ece4: #e2e4ec;
+  --c-e3e9e6: #e3e4e9;
+  --c-e5ebe6: #e5e6eb;
+  --c-e5ebe8: #e5e6eb;
+  --c-e6f3ed: #e6e8f3;
+  --c-e7f3ee: #e7e9f3;
+  --c-e8ede9: #e8e9ed;
+  --c-e8f1eb: #e8e9f1;
+  --c-e8f3ed: #e8eaf3;
+  --c-e8f5ec: #e6f4ea;
+  --c-e9eee8: #e8e9ee;
+  --c-edf0ee: #ededf0;
+  --c-edf1ef: #edeef1;
+  --c-edf2ec: #ecedf2;
+  --c-edf5ef: #edeef5;
   --c-eef1f8: #eef1f8;
-  --c-f0f5f2: #f0f5f2;
+  --c-f0f5f2: #f0f1f5;
   --c-f3e6c6: #f3e6c6;
-  --c-f3f7f4: #f3f7f4;
-  --c-f3f8f5: #f3f8f5;
-  --c-f4f6f5: #f4f6f5;
-  --c-f4f7f3: #f4f7f3;
+  --c-f3f7f4: #f3f4f7;
+  --c-f3f8f5: #f3f4f8;
+  --c-f4f6f5: #f4f4f6;
+  --c-f4f7f3: #f3f4f7;
   --c-f6eddb: #f6eddb;
-  --c-f9c74f: #f9c74f;
+  --c-f9c74f: #f17f1f;
   --c-faeceb: #faeceb;
-  --c-fafcfb: #fafcfb;
-  --c-fde9a6: #fde9a6;
-  --c-fff8e1: #fff8e1;
+  --c-fafcfb: #fafafc;
+  --c-fde9a6: #fdd9b8;
+  --c-fff8e1: #fff0e3;
   --c-fff8e8: #fff8e8;
   --c-ffffff: #ffffff;
   --c-ffffff70: #ffffff70;
-  --c-176b55: #12463a;
-  --c-155a47: #0f3b31;
+  --c-176b55: #101a52;
+  --c-155a47: #0b1342;
 }
 :root[data-theme='dark'] .slot .status-confirmed.MuiChip-root {
-  background: #4a3b12;
-  color: #f9d77e;
+  background: #4a2410;
+  color: #ffb27a;
 }
 :root[data-theme='dark'] .slot .status-completed.MuiChip-root {
   background: #1f4430;
   color: #9fe0b9;
 }
 :root[data-theme='dark'] .count.pending {
-  color: #3d2c00;
+  color: #3d1a00;
+}
+/* Laptops with little vertical space: compact sidebar so every option fits. */
+@media (min-width: 701px) and (max-height: 820px) {
+  .app-shell > .sidebar {
+    padding: 18px 14px;
+  }
+  .app-shell > .sidebar .brand {
+    font-size: 1.5rem;
+  }
+  .app-shell > .sidebar .brand svg {
+    font-size: 26px;
+  }
+  .app-shell > .sidebar .sidebar-caption {
+    margin: 22px 13px 10px;
+  }
+  .app-shell > .sidebar .nav-item {
+    padding: 9px 13px;
+    margin-bottom: 3px;
+  }
+  .app-shell > .sidebar .sidebar-help {
+    display: none;
+  }
+  .app-shell > .sidebar .sidebar-bottom {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+}
+/* Wide logos that include the clinic name replace the wordmark. Their small
+   bottom line (tagline, pulse) needs room, so each area shows them as large as it can. */
+.clinic-logo-wide {
+  display: block;
+  height: 52px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.sidebar .brand:has(.clinic-logo-wide) {
+  padding: 0;
+}
+.sidebar .clinic-logo-wide {
+  width: 100%;
+  height: auto;
+}
+.landing-nav .clinic-logo-wide {
+  height: 88px;
+}
+.login-story .clinic-logo-wide {
+  height: 150px;
+  /* The navy panel would hide the navy lettering: show the logo on a light plate. */
+  background: #f7f7f7;
+  padding: 10px 16px;
+  border-radius: 14px;
+  box-sizing: content-box;
+}
+.landing-footer .clinic-logo-wide {
+  height: 56px;
+}
+@media (max-width: 700px) {
+  .landing-nav .clinic-logo-wide {
+    height: 64px;
+  }
+  .login-story .clinic-logo-wide {
+    height: 96px;
+  }
+}
+/* Logos made for light backgrounds stay legible in dark mode on a light plate. */
+:root[data-theme='dark'] .clinic-logo-wide,
+:root[data-theme='dark'] .clinic-logo {
+  background: #f7f7f7;
+  border-radius: 10px;
+}
+:root[data-theme='dark'] .clinic-logo-wide {
+  padding: 4px 8px;
+}
+/* Citas: full-page calendar, then the selected day's page. */
+.month-calendar .month-day {
+  min-height: 88px;
+}
+.day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -6px 0 10px;
+}
+.day-nav > div {
+  display: flex;
+  align-items: center;
+}
+.day-title::first-letter {
+  text-transform: uppercase;
+}
+@media (max-width: 700px) {
+  .month-calendar .month-day {
+    min-height: 52px;
+  }
+}
+/* Caja, gastos, reportes y servicios. Colors reuse the theme tokens so dark mode follows. */
+.charge-lines {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0;
+}
+.charge-line {
+  display: grid;
+  grid-template-columns: minmax(160px, 2fr) 80px 130px 90px 40px;
+  gap: 10px;
+  align-items: center;
+}
+.charge-line:has(> :nth-child(6)) {
+  grid-template-columns: minmax(140px, 1.3fr) minmax(140px, 1.3fr) 80px 120px 90px 40px;
+}
+.charge-amount {
+  text-align: right;
+}
+.charge-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 12px;
+  margin: 18px 0 10px;
+}
+.charge-totals {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 18px;
+  margin: 8px 0 12px;
+  color: var(--c-72817e);
+}
+.charge-totals b {
+  font-size: 1.35rem;
+  color: var(--c-176b55);
+}
+.receipt-print {
+  font-size: 0.9rem;
+}
+.receipt-print h3 {
+  margin: 0 0 4px;
+}
+.receipt-print p {
+  margin: 6px 0;
+}
+.receipt-print table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+.receipt-print td {
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--c-e2e9e5);
+}
+.receipt-print td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+.receipt-print .receipt-total td {
+  font-weight: 700;
+  border-bottom: 0;
+  font-size: 1.05rem;
+}
+.receipt-void {
+  color: var(--c-b55235);
+  font-weight: 700;
+}
+.receipt-sheet {
+  display: none;
+}
+@media print {
+  body.print-receipt > *:not(.receipt-sheet) {
+    display: none !important;
+  }
+  body.print-receipt {
+    overflow: visible !important;
+    background: #fff !important;
+  }
+  /* 72 mm wide: fits thermal ticket printers and the corner of an A4 sheet. */
+  body.print-receipt .receipt-sheet {
+    display: block;
+    width: 72mm;
+    color: #000;
+    font: 10pt/1.4 'Segoe UI', Arial, sans-serif;
+  }
+  body.print-receipt .receipt-sheet td {
+    border-bottom-color: #bbb;
+  }
+}
+.cash-closed {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.cash-closed > svg {
+  font-size: 40px;
+  color: var(--c-176b55);
+}
+.cash-closed > div {
+  flex: 1;
+  min-width: 200px;
+}
+.cash-closed .MuiTextField-root {
+  max-width: 200px;
+}
+.cash-stats strong,
+.report-stats strong {
+  font-size: 1.6rem;
+}
+.cash-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: -10px 0 22px;
+}
+.cash-methods {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cash-actions > div:last-child {
+  display: flex;
+  gap: 8px;
+}
+.cash-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--c-edf1ef);
+}
+.cash-row small {
+  color: var(--c-72817e);
+}
+tr.is-void td {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+tr.is-void td small,
+tr.is-void td:last-child {
+  text-decoration: none;
+}
+.expense-total {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.expense-total b {
+  font-size: 1.2rem;
+  margin-left: 6px;
+}
+.report-toolbar {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.report-grid .panel {
+  margin-bottom: 0;
+}
+.service-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 10px;
+}
+.service-list li {
+  display: grid;
+  gap: 2px;
+}
+.service-list span {
+  color: var(--c-758476);
+  font-size: 0.9rem;
+}
+.service-flags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.services-note {
+  flex: 1;
+  margin: 0;
+}
+@media (max-width: 900px) {
+  .report-grid,
+  .charge-footer {
+    grid-template-columns: 1fr;
+  }
+  .charge-line,
+  .charge-line:has(> :nth-child(6)) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .charge-amount {
+    text-align: left;
+  }
+  .cash-row {
+    grid-template-columns: 1fr auto;
+  }
+}
+/* Printable clinical history (browser print dialog -> "Guardar como PDF"). */
+.history-print {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  /* Paper is always white, also when the app is in dark mode. */
+  :root {
+    color-scheme: light !important;
+    background: #fff !important;
+  }
+  body.print-history > *:not(.history-print) {
+    display: none !important;
+  }
+  body.print-history {
+    background: #fff !important;
+    /* The open patient drawer locks scrolling; allow the history to span pages. */
+    overflow: visible !important;
+  }
+
+  body.print-history .history-print {
+    display: block;
+    color: #111;
+    font: 10.5pt/1.45 'Segoe UI', Arial, sans-serif;
+  }
+  .history-print header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 2px solid #0b1a6e;
+    padding-bottom: 8px;
+  }
+  .history-print header img {
+    height: 48px;
+    width: auto;
+  }
+  .history-print header div {
+    display: grid;
+  }
+  .history-print header b {
+    font-size: 14pt;
+    color: #0b1a6e;
+  }
+  .history-print h1 {
+    font-size: 16pt;
+    margin: 14px 0 8px;
+  }
+  .history-print h2 {
+    font-size: 12pt;
+    margin: 18px 0 6px;
+    color: #0b1a6e;
+    break-after: avoid;
+  }
+  .history-print h3 {
+    font-size: 11pt;
+    margin: 2px 0;
+  }
+  .history-print table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .history-print th,
+  .history-print td {
+    text-align: left;
+    vertical-align: top;
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+  }
+  .history-print th {
+    background: #f1f3f8;
+    font-weight: 600;
+  }
+  .history-facts th {
+    width: 18%;
+  }
+  .history-entry {
+    border-left: 3px solid #0b1a6e;
+    padding: 4px 0 4px 10px;
+    margin: 8px 0;
+    break-inside: avoid;
+  }
+  .history-entry p {
+    margin: 2px 0;
+    white-space: pre-wrap;
+  }
+  .history-entry small {
+    color: #555;
+  }
+  .history-controls tr {
+    break-inside: avoid;
+  }
+  .history-print footer {
+    margin-top: 20px;
+    padding-top: 6px;
+    border-top: 1px solid #ccc;
+    font-size: 8.5pt;
+    color: #555;
+  }
+}
+.charge-cash {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 420px;
+  margin: 0 0 12px auto;
+}
+.charge-change input {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+@media (max-width: 900px) {
+  .charge-cash {
+    max-width: none;
+  }
 }

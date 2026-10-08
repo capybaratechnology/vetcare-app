@@ -171,12 +171,79 @@ export type Control = {
   notes: string;
   status: string;
 };
+export type Service = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  price?: number; // never sent to the public landing
+  variable_price: boolean;
+  show_on_landing: boolean;
+  bookable: boolean;
+  active: boolean;
+  sort: number;
+};
+export type CashSession = {
+  id: string;
+  opened_at: string;
+  opened_by: string;
+  opening_amount: number;
+  closed_at: string | null;
+  closed_by: string | null;
+  expected_cash: number | null;
+  counted_cash: number | null;
+  notes: string;
+};
+export type Payment = {
+  id: string;
+  number: number;
+  session_id: string;
+  appointment_id: string | null;
+  client_id: string | null;
+  pet_id: string | null;
+  subtotal: number;
+  discount: number;
+  total: number;
+  method: string;
+  notes: string;
+  status: string;
+  void_reason: string | null;
+  created_by: string;
+  created_at: string;
+};
+export type PaymentItem = {
+  id: string;
+  payment_id: string;
+  service_id: string | null;
+  description: string;
+  quantity: number;
+  unit_price: number;
+  amount: number;
+};
+export type Expense = {
+  id: string;
+  spent_on: string;
+  category: string;
+  description: string;
+  amount: number;
+  method: string;
+  session_id: string | null;
+  status: string;
+  void_reason: string | null;
+  created_by: string;
+  created_at: string;
+};
 export type Data = {
   clients: Client[];
   pets: Pet[];
   appointments: Appointment[];
   medical_records: MedicalRecord[];
   controls: Control[];
+  services: Service[];
+  cash_sessions: CashSession[];
+  payments: Payment[];
+  payment_items: PaymentItem[];
+  expenses: Expense[];
 };
 export type Table = keyof Data;
 export const emptyData: Data = {
@@ -185,7 +252,39 @@ export const emptyData: Data = {
   appointments: [],
   medical_records: [],
   controls: [],
+  services: [],
+  cash_sessions: [],
+  payments: [],
+  payment_items: [],
+  expenses: [],
 };
+// Same catalog the services migration seeds, with sample prices for the demo.
+export function demoServices(): Service[] {
+  return (
+    [
+      ['Consulta general', 'Consultas', 'Evaluación clínica, orientación y seguimiento de su salud.', 50, false, true],
+      ['Control de tratamiento', 'Consultas', 'Seguimiento de un tratamiento en curso.', 35, false, true],
+      ['Vacunación', 'Prevención', 'Aplicación de vacunas y registro de su carné.', 60, false, true],
+      ['Desparasitación', 'Prevención', 'Desparasitación interna y externa.', 30, false, true],
+      ['Baño normal', 'Baño y estética', 'Baño con champú para su tipo de pelaje.', 35, false, true],
+      ['Baño medicado', 'Baño y estética', 'Baño con champú medicado indicado por el veterinario.', 45, false, true],
+      ['Corte de pelaje', 'Baño y estética', 'Corte y arreglo del pelaje.', 40, false, true],
+      ['Corte de uñas', 'Baño y estética', 'Corte y limado de uñas.', 15, false, true],
+      ['Cirugía', 'Cirugía', 'Intervenciones quirúrgicas según el diagnóstico del médico veterinario.', 300, true, false],
+    ] as const
+  ).map(([name, category, description, price, variable_price, bookable], i) => ({
+    id: 's' + (i + 1),
+    name,
+    category,
+    description,
+    price,
+    variable_price,
+    show_on_landing: true,
+    bookable,
+    active: true,
+    sort: (i + 1) * 10,
+  }));
+}
 export function demoData(): Data {
   const today = localDate();
   return {
@@ -348,6 +447,11 @@ export function demoData(): Data {
         status: 'active',
       },
     ],
+    services: demoServices(),
+    cash_sessions: [],
+    payments: [],
+    payment_items: [],
+    expenses: [],
   };
 }
 

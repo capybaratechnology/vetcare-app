@@ -36,6 +36,9 @@ import Close from '@mui/icons-material/Close';
 import EditOutlined from '@mui/icons-material/EditOutlined';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import Logout from '@mui/icons-material/Logout';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import Schedule from '@mui/icons-material/Schedule';
@@ -50,7 +53,6 @@ import {
   zonedISO,
   validPhone,
   TIMEZONE,
-  SERVICES,
   slotTimes,
   dayHours,
   hoursSummary,
@@ -59,6 +61,9 @@ import {
   type Data,
   type Table,
   type Pet,
+  type Payment,
+  type Service,
+  demoServices,
 } from './domain';
 import Landing from './Landing';
 import Login from './Login';
@@ -67,6 +72,18 @@ import Settings from './Settings';
 import MergeClients from './MergeClients';
 import MonthCalendar, { type DayCount } from './MonthCalendar';
 import { ColorModeToggle } from './colorMode';
+import Services from './Services';
+import Cash from './Cash';
+import Expenses from './Expenses';
+import Reports from './Reports';
+import { ChargeDialog, ReceiptDialog } from './Charge';
+import HistoryPrint, { printHistory } from './HistoryPrint';
+import PrintOutlined from '@mui/icons-material/PrintOutlined';
+import { applyLocal, paidFor, type MoneyCall } from './money';
+import PointOfSaleOutlined from '@mui/icons-material/PointOfSaleOutlined';
+import ReceiptLongOutlined from '@mui/icons-material/ReceiptLongOutlined';
+import AssessmentOutlined from '@mui/icons-material/AssessmentOutlined';
+import SellOutlined from '@mui/icons-material/SellOutlined';
 import { Brand, DEFAULT_CLINIC, fetchClinic, type Clinic } from './clinic';
 import StorefrontOutlined from '@mui/icons-material/StorefrontOutlined';
 import {
@@ -84,6 +101,10 @@ const nav = [
   { Icon: Pets, label: 'Mascotas' },
   { Icon: MedicalServicesOutlined, label: 'Historial médico' },
   { Icon: HealthAndSafetyOutlined, label: 'Vacunas y tratamientos' },
+  { Icon: PointOfSaleOutlined, label: 'Caja' },
+  { Icon: ReceiptLongOutlined, label: 'Gastos' },
+  { Icon: AssessmentOutlined, label: 'Reportes' },
+  { Icon: SellOutlined, label: 'Servicios' },
   { Icon: StorefrontOutlined, label: 'Configuración' },
 ];
 // Citas calendar wording: yellow = pending, green = attended.
@@ -130,13 +151,21 @@ export default function App() {
   const [clinicLoaded, setClinicLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mergePhone, setMergePhone] = useState('');
+  // Charge dialog: undefined = closed, null = walk-in sale, string = appointment being charged.
+  const [charging, setCharging] = useState<string | null | undefined>(undefined);
+  const [receipt, setReceipt] = useState<Payment | null>(null);
+  const [publicServices, setPublicServices] = useState<Service[]>(() =>
+    supabase ? [] : demoServices(),
+  );
   const [userName, setUserName] = useState('Equipo de demostración');
   const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   // Citas: month shown in the calendar and the day picked in it (none until clicked).
   const [month, setMonth] = useState(localDate().slice(0, 7));
-  const [day, setDay] = useState('');
+  const [day, setDay] = useState(localDate());
+  // Citas shows the month calendar first; picking a day opens that day's page.
+  const [dayView, setDayView] = useState(false);
   const [form, setForm] = useState<FormSpec | null>(null);
   const [detail, setDetail] = useState<Pet | null>(null);
   const [snack, setSnack] = useState('');
@@ -147,7 +176,8 @@ export default function App() {
     null,
   );
   const demo = !supabase,
-    clinical = role === 'admin' || role === 'vet';
+    clinical = role === 'admin' || role === 'vet',
+    cashier = role === 'admin' || role === 'reception';
   const navigate = useCallback((p: string) => {
     location.hash = p;
     setPage(p);
@@ -172,6 +202,19 @@ export default function App() {
       setClinic(c);
       setClinicLoaded(true);
     });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (!supabase) return;
+    let alive = true;
+    // Anonymous read: the services table only exposes non-price columns to visitors.
+    void supabase
+      .from('services')
+      .select('id,name,category,description,variable_price,show_on_landing,bookable,active,sort')
+      .order('sort')
+      .then(({ data: rows }) => alive && rows && setPublicServices(rows as Service[]));
     return () => {
       alive = false;
     };
@@ -422,6 +465,21 @@ export default function App() {
         (demo ? ' Se restablece al recargar.' : ''),
     );
   }
+  // Cash register, payments and expenses go through database functions (demo: same rules in memory).
+  async function moneyCall(c: MoneyCall) {
+    if (demo) {
+      const { data: next, result } = applyLocal(data, c, userId, role === 'admin');
+      setData(next);
+      return result;
+    }
+    const { data: result, error } = await supabase!.rpc(c.fn, c.args);
+    if (error) throw Error(errText(error));
+    await reload();
+    return result;
+  }
+  const activeServices = data.services
+    .filter((s) => s.active)
+    .sort((a, b) => a.sort - b.sort);
   const recordFor = (appointmentId: string) =>
     data.medical_records.find((r) => r.appointment_id === appointmentId);
   const appointmentLabel = (id: string) => {
@@ -516,7 +574,7 @@ export default function App() {
         pet_id: '',
         day: today,
         time: slotTimes(today, clinic.hours)[0] || '',
-        reason: SERVICES[0],
+        reason: activeServices[0]?.name || '',
         status: 'confirmed',
         source: 'staff',
       },
@@ -536,6 +594,11 @@ export default function App() {
         notes: '',
         status: 'active',
       },
+      services: {},
+      cash_sessions: {},
+      payments: {},
+      payment_items: {},
+      expenses: {},
     };
     setForm({ table, id, values: { ...defaults[table], ...values } });
   }
@@ -733,6 +796,11 @@ export default function App() {
                       : statusLabels[a.status]
                   }
                 />
+                {a.status === 'completed' && cashier && !paidFor(data, a.id) && (
+                  <Button size="small" onClick={() => setCharging(a.id)}>
+                    Cobrar
+                  </Button>
+                )}
                 {a.status === 'completed' && clinical && !recordFor(a.id) && (
                   <Button
                     size="small"
@@ -818,11 +886,42 @@ export default function App() {
         ...active.map((a) => clock(a.starts_at)),
       ]),
     ].sort();
+    const goDay = (n: number) => {
+      const d = new Date(day + 'T12:00:00Z');
+      d.setUTCDate(d.getUTCDate() + n);
+      const next = d.toISOString().slice(0, 10);
+      setDay(next);
+      setMonth(next.slice(0, 7));
+    };
     return (
       <>
+        <div className="day-nav">
+          <Button startIcon={<ArrowBack />} onClick={() => setDayView(false)}>
+            Volver al calendario
+          </Button>
+          <div>
+            <IconButton aria-label="Día anterior" onClick={() => goDay(-1)}>
+              <ChevronLeft />
+            </IconButton>
+            {day !== today && (
+              <Button size="small" onClick={() => setDay(today)}>
+                Hoy
+              </Button>
+            )}
+            <IconButton aria-label="Día siguiente" onClick={() => goDay(1)}>
+              <ChevronRight />
+            </IconButton>
+          </div>
+        </div>
         <div className="section-heading">
           <div>
-            <h2>{dateLabel(day)}</h2>
+            <h2 className="day-title">
+              {new Intl.DateTimeFormat('es-PE', {
+                weekday: 'long',
+                timeZone: 'UTC',
+              }).format(new Date(day + 'T12:00:00Z'))}{' '}
+              {dateLabel(day)}
+            </h2>
             <small className="muted">
               {isOpen
                 ? 'Bloques de 30 minutos · ' + TIMEZONE
@@ -895,6 +994,7 @@ export default function App() {
       <Landing
         demo={demo}
         clinic={clinic}
+        services={demo ? data.services : publicServices}
         data={data}
         navigate={navigate}
         onDemoBooking={(client, p, newAppointment) => {
@@ -1079,12 +1179,23 @@ export default function App() {
                           'Una historia clínica para cada paciente.',
                         'Vacunas y tratamientos':
                           'Registra aplicaciones, tratamientos y próximos controles.',
+                        Caja: 'Apertura, cobros y cierre de caja del día.',
+                        Gastos: 'Registra los egresos de la clínica.',
+                        Reportes: 'Ingresos, gastos y resultado por período.',
+                        Servicios:
+                          'Servicios que ofrece la clínica y sus precios.',
                       } as Record<string, string>
                     )[page]}
               </p>
             </div>
-            {page !== 'Usuarios' &&
-              page !== 'Configuración' &&
+            {![
+              'Usuarios',
+              'Configuración',
+              'Caja',
+              'Gastos',
+              'Reportes',
+              'Servicios',
+            ].includes(page) &&
               canAccess(role, page) && (
               <Button
                 disabled={!!supabase && !role}
@@ -1138,6 +1249,25 @@ export default function App() {
             <Alert severity="warning">
               Tu perfil no tiene acceso a esta sección.
             </Alert>
+          ) : page === 'Caja' ? (
+            <Cash
+              data={data}
+              isAdmin={role === 'admin'}
+              call={moneyCall}
+              onCharge={setCharging}
+              onReceipt={setReceipt}
+            />
+          ) : page === 'Gastos' ? (
+            <Expenses data={data} isAdmin={role === 'admin'} call={moneyCall} />
+          ) : page === 'Reportes' ? (
+            <Reports data={data} />
+          ) : page === 'Servicios' ? (
+            <Services
+              services={data.services}
+              save={async (row, id) => {
+                await persist('services', row, id);
+              }}
+            />
           ) : page === 'Configuración' ? (
             // Remount once the stored profile arrives so the form starts from it.
             <Settings
@@ -1213,6 +1343,7 @@ export default function App() {
                       onClick={() => {
                         setMonth(today.slice(0, 7));
                         setDay(today);
+                        setDayView(true);
                         navigate('Citas');
                       }}
                     >
@@ -1293,8 +1424,10 @@ export default function App() {
                   }}
                 />
               </div>
-              {page === 'Citas' && (
-                <div className="citas-layout">
+              {page === 'Citas' &&
+                (dayView ? (
+                  <section className="panel day-panel">{dayAgenda()}</section>
+                ) : (
                   <MonthCalendar
                     month={month}
                     selected={day}
@@ -1304,31 +1437,11 @@ export default function App() {
                     onMonth={setMonth}
                     onSelect={(d) => {
                       setDay(d);
-                      // Stacked layout: bring the day's hours into view.
-                      if (window.matchMedia('(max-width: 1150px)').matches)
-                        setTimeout(() =>
-                          document
-                            .querySelector('.day-panel')
-                            ?.scrollIntoView({ behavior: 'smooth' }),
-                        );
+                      setDayView(true);
+                      window.scrollTo({ top: 0 });
                     }}
                   />
-                  <section className="panel day-panel">
-                    {day ? (
-                      dayAgenda()
-                    ) : (
-                      <div className="empty">
-                        <CalendarMonth />
-                        <h3>Selecciona un día</h3>
-                        <p>
-                          Toca un día del calendario para ver sus horas y
-                          citas.
-                        </p>
-                      </div>
-                    )}
-                  </section>
-                </div>
-              )}
+                ))}
               {page === 'Clientes' && duplicates.size > 0 && (
                 <Alert severity="warning" sx={{ mb: 2 }}>
                   {duplicates.size === 1
@@ -1749,7 +1862,18 @@ export default function App() {
                       options(slotTimes(String(form.values.day), clinic.hours)),
                     )}
                   </div>
-                  {field('reason', 'Motivo', 'text', true, options(SERVICES))}
+                  {field(
+                    'reason',
+                    'Motivo',
+                    'text',
+                    true,
+                    options([
+                      ...new Set([
+                        ...activeServices.map((x) => x.name),
+                        ...(form.values.reason ? [String(form.values.reason)] : []),
+                      ]),
+                    ]),
+                  )}
                   <Alert severity="info">
                     {hoursSummary(clinic.hours)} · {TIMEZONE}. Se reserva un
                     bloque de 30 minutos.
@@ -1819,6 +1943,27 @@ export default function App() {
           </DialogActions>
         </form>
       </Dialog>
+      {charging !== undefined && (
+        <ChargeDialog
+          data={data}
+          appointmentId={charging}
+          call={moneyCall}
+          onClose={() => setCharging(undefined)}
+          onDone={(p) => {
+            setCharging(undefined);
+            setReceipt(p);
+          }}
+        />
+      )}
+      {receipt && (
+        <ReceiptDialog
+          // Re-read so a void done meanwhile shows up.
+          payment={data.payments.find((p) => p.id === receipt.id) || receipt}
+          data={data}
+          clinic={clinic}
+          onClose={() => setReceipt(null)}
+        />
+      )}
       {duplicates.get(mergePhone) && (
         <MergeClients
           group={duplicates.get(mergePhone)!}
@@ -1919,15 +2064,26 @@ export default function App() {
                       )
                     </span>
                   </h2>
-                  <Button
-                    startIcon={<Add />}
-                    onClick={() =>
-                      open('medical_records', { pet_id: detail.id })
-                    }
-                  >
-                    Consulta
-                  </Button>
+                  <div>
+                    <Button startIcon={<PrintOutlined />} onClick={printHistory}>
+                      PDF
+                    </Button>
+                    <Button
+                      startIcon={<Add />}
+                      onClick={() =>
+                        open('medical_records', { pet_id: detail.id })
+                      }
+                    >
+                      Consulta
+                    </Button>
+                  </div>
                 </div>
+                <HistoryPrint
+                  pet={detail}
+                  data={data}
+                  clinic={clinic}
+                  author={userName}
+                />
                 {data.medical_records
                   .filter((r) => r.pet_id === detail.id)
                   .sort((a, b) => b.visit_date.localeCompare(a.visit_date))

@@ -22,11 +22,12 @@ import MedicalServicesOutlined from '@mui/icons-material/MedicalServicesOutlined
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
 import ArrowBack from '@mui/icons-material/ArrowBack';
+import ContentCutOutlined from '@mui/icons-material/ContentCutOutlined';
+import Pets from '@mui/icons-material/Pets';
 import { supabase } from './data';
 import { Brand, ClinicLogo, type Clinic } from './clinic';
 import { ColorModeToggle } from './colorMode';
 import {
-  SERVICES,
   TIMEZONE,
   localDate,
   dateLabel,
@@ -38,6 +39,7 @@ import {
   type Client,
   type Pet,
   type Appointment,
+  type Service,
 } from './domain';
 declare global {
   interface Window {
@@ -83,9 +85,17 @@ function Captcha({ onToken }: { onToken: (token: string) => void }) {
   }, []);
   return <div ref={el} />;
 }
+const CATEGORY_CARDS = [
+  { category: 'Consultas', Icon: MedicalServicesOutlined, title: 'Consultas veterinarias' },
+  { category: 'Prevención', Icon: HealthAndSafetyOutlined, title: 'Vacunas y prevención' },
+  { category: 'Baño y estética', Icon: ContentCutOutlined, title: 'Baño y estética' },
+  { category: 'Cirugía', Icon: FavoriteBorder, title: 'Cirugías' },
+  { category: 'Otros', Icon: Pets, title: 'Otros servicios' },
+];
 type Props = {
   demo: boolean;
   clinic: Clinic;
+  services: Service[];
   data: Data;
   navigate: (p: string) => void;
   onDemoBooking: (c: Client, p: Pet, a: Appointment) => void;
@@ -101,6 +111,7 @@ const prompts = [
 export default function Landing({
   demo,
   clinic,
+  services,
   data,
   navigate,
   onDemoBooking,
@@ -114,7 +125,7 @@ export default function Landing({
     [phone, setPhone] = useState(''),
     [petName, setPetName] = useState(''),
     [species, setSpecies] = useState('Perro'),
-    [reason, setReason] = useState(SERVICES[0]),
+    [pickedReason, setReason] = useState(''),
     [day, setDay] = useState(localDate()),
     [slot, setSlot] = useState(''),
     [slots, setSlots] = useState<string[]>([]),
@@ -122,6 +133,15 @@ export default function Landing({
     [token, setToken] = useState(''),
     [requestKey, setRequestKey] = useState(() => crypto.randomUUID()),
     [captchaVersion, setCaptchaVersion] = useState(0);
+  const shown = services
+    .filter((s) => s.active && s.show_on_landing)
+    .sort((a, b) => a.sort - b.sort);
+  const bookable = services
+    .filter((s) => s.active && s.bookable)
+    .sort((a, b) => a.sort - b.sort)
+    .map((s) => s.name);
+  // Until the visitor picks one, the first bookable service is preselected.
+  const reason = bookable.includes(pickedReason) ? pickedReason : bookable[0] || '';
   useEffect(() => {
     if (!open || step !== 4 || !day) return;
     let alive = true;
@@ -365,28 +385,24 @@ export default function Landing({
           </div>
           <span className="muted">Para perros, gatos y sus familias.</span>
         </div>
+        {/* Catalog from the database; prices are never sent to the public page. */}
         <div className="services-grid">
-          {[
-            {
-              Icon: MedicalServicesOutlined,
-              title: 'Consultas veterinarias',
-              text: 'Evaluación clínica, orientación y seguimiento de su salud.',
-            },
-            {
-              Icon: HealthAndSafetyOutlined,
-              title: 'Vacunas y prevención',
-              text: 'Un registro de sus vacunas y próximos controles.',
-            },
-            {
-              Icon: FavoriteBorder,
-              title: 'Tratamientos y controles',
-              text: 'Continuidad en cada tratamiento, con su historia siempre a mano.',
-            },
-          ].map(({ Icon, title, text }) => (
-            <article key={title}>
+          {CATEGORY_CARDS.filter(({ category }) =>
+            shown.some((s) => s.category === category),
+          ).map(({ category, Icon, title }) => (
+            <article key={category}>
               <Icon />
               <h3>{title}</h3>
-              <p>{text}</p>
+              <ul className="service-list">
+                {shown
+                  .filter((s) => s.category === category)
+                  .map((s) => (
+                    <li key={s.id}>
+                      <b>{s.name}</b>
+                      {s.description && <span>{s.description}</span>}
+                    </li>
+                  ))}
+              </ul>
             </article>
           ))}
         </div>
@@ -540,7 +556,7 @@ export default function Landing({
                 )}
                 {step === 3 && (
                   <div className="service-options">
-                    {SERVICES.map((s) => (
+                    {bookable.map((s) => (
                       <Button
                         key={s}
                         variant={reason === s ? 'contained' : 'outlined'}

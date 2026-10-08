@@ -6,17 +6,18 @@ import { useColorMode, type ColorMode } from './colorMode';
 import './styles.css';
 // Dark values match the derived tokens in styles.css (light surfaces -> dark, text -> light).
 const palettes = {
+  // Mundo Animal logo: navy (#0b1a6e) primary, heart red (#ef2414) accent.
   light: {
-    primary: { main: '#176b55' },
-    secondary: { main: '#e9ae4f' },
+    primary: { main: '#0b1a6e' },
+    secondary: { main: '#ef2414' },
     background: { default: '#f6f8fa', paper: '#ffffff' },
-    text: { primary: '#1e3431', secondary: '#697b77' },
+    text: { primary: '#1e2134', secondary: '#696c7b' },
   },
   dark: {
-    primary: { main: '#4dcbaa' },
-    secondary: { main: '#ddab5b' },
-    background: { default: '#111614', paper: '#1a1f1d' },
-    text: { primary: '#d8e1e0', secondary: '#9da6a4' },
+    primary: { main: '#7b8ff7' },
+    secondary: { main: '#df3224' },
+    background: { default: '#11131b', paper: '#1a1c27' },
+    text: { primary: '#d8d9e1', secondary: '#9d9ea6' },
   },
 };
 function makeTheme(mode: ColorMode) {

@@ -42,7 +42,10 @@ export function demoAccounts(): DemoUser[] {
 export function canAccess(role: string, page: string) {
   if (['landing', 'login'].includes(page)) return true;
   if (!['admin', 'vet', 'reception'].includes(role)) return false;
-  if (page === 'Usuarios' || page === 'Configuración') return role === 'admin';
+  if (['Usuarios', 'Configuración', 'Reportes', 'Servicios'].includes(page))
+    return role === 'admin';
+  if (['Caja', 'Gastos'].includes(page))
+    return role === 'admin' || role === 'reception';
   if (['Historial médico', 'Vacunas y tratamientos'].includes(page))
     return role === 'admin' || role === 'vet';
   return ['Resumen', 'Clientes', 'Mascotas', 'Citas'].includes(page);

@@ -16,6 +16,17 @@ test('each profile only reaches its permitted modules', () => {
     assert.equal(canAccess(role, 'Configuración'), false);
   }
   assert.equal(canAccess('reception', 'Historial médico'), false);
+  // Money: admin and reception handle the register and expenses; reports and prices are admin only.
+  for (const page of ['Caja', 'Gastos']) {
+    assert.ok(canAccess('admin', page));
+    assert.ok(canAccess('reception', page));
+    assert.equal(canAccess('vet', page), false);
+  }
+  for (const page of ['Reportes', 'Servicios']) {
+    assert.ok(canAccess('admin', page));
+    assert.equal(canAccess('reception', page), false);
+    assert.equal(canAccess('vet', page), false);
+  }
   assert.equal(canAccess('reception', 'Vacunas y tratamientos'), false);
   assert.equal(canAccess('', 'Resumen'), false);
   assert.equal(canAccess('admin', 'Unknown'), false);

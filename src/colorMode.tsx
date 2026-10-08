@@ -22,7 +22,7 @@ function apply() {
   document.documentElement.dataset.theme = mode;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', mode === 'dark' ? '#111614' : '#176b55');
+    ?.setAttribute('content', mode === 'dark' ? '#11131b' : '#0b1a6e');
 }
 if (typeof document !== 'undefined') apply();
 export function useColorMode() {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Pets from '@mui/icons-material/Pets';
 import { supabase } from './data';
 import { DEFAULT_HOURS, type Hours } from './domain';
@@ -35,10 +36,33 @@ export function ClinicLogo({ clinic }: { clinic: Clinic }) {
   );
 }
 // Default brand keeps the original "vetcare+" wordmark; a custom name is shown as typed.
+// A wide logo (e.g. one that already contains the clinic name) is shown alone and larger.
 export function Brand({ clinic }: { clinic: Clinic }) {
+  const [wide, setWide] = useState(false);
+  if (clinic.logo_url && wide)
+    return (
+      <img
+        className="clinic-logo-wide"
+        src={clinic.logo_url}
+        alt={clinic.name}
+      />
+    );
   return (
     <>
-      <ClinicLogo clinic={clinic} />
+      {clinic.logo_url ? (
+        <img
+          className="clinic-logo"
+          src={clinic.logo_url}
+          alt=""
+          onLoad={(e) =>
+            setWide(
+              e.currentTarget.naturalWidth > e.currentTarget.naturalHeight * 1.6,
+            )
+          }
+        />
+      ) : (
+        <Pets />
+      )}
       {clinic.name === DEFAULT_CLINIC.name ? (
         <>
           vetcare<span>+</span>

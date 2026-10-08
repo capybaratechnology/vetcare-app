@@ -52,12 +52,10 @@ Deno.serve(async (req) => {
       typeof b.phone !== 'string' ||
       !/^\+[1-9]\d{7,14}$/.test(b.phone) ||
       !['Perro', 'Gato', 'Otro'].includes(b.species) ||
-      ![
-        'Consulta general',
-        'Vacunación',
-        'Control de tratamiento',
-        'Desparasitación',
-      ].includes(b.reason) ||
+      // The database checks the reason against the active, bookable services.
+      typeof b.reason !== 'string' ||
+      !b.reason.trim() ||
+      b.reason.length > 80 ||
       typeof b.consent !== 'boolean' ||
       typeof b.key !== 'string' ||
       !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -121,6 +119,11 @@ Deno.serve(async (req) => {
         return respond(
           { error: 'El horario ya no está disponible. Elige otro.' },
           409,
+        );
+      if (error.message.includes('servicio'))
+        return respond(
+          { error: 'Ese servicio no está disponible para reservar en línea.' },
+          400,
         );
       if (error.message.includes('límite'))
         return respond(

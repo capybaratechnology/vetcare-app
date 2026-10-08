@@ -68,6 +68,16 @@ test('PostgreSQL schema, staff permissions, booking transaction and reminder cla
       'utf8',
     ),
   );
+  await db.exec(
+    await readFile(
+      new URL(
+        '../supabase/migrations/202610080001_services_cash.sql',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
+  // 202610080002_realtime_cash.sql only alters the Supabase publication.
   const admin = '10000000-0000-4000-8000-000000000001',
     reception = '10000000-0000-4000-8000-000000000002',
     stranger = '10000000-0000-4000-8000-000000000003';
@@ -693,6 +703,120 @@ test('PostgreSQL schema, staff permissions, booking transaction and reminder cla
           1,
           table + ' follow the merged pet',
         );
+    },
+  );
+
+  await t.test(
+    'services are public without prices and drive appointment reasons',
+    async () => {
+      await db.exec('reset role');
+      await db.exec('set role anon');
+      const pub = await db.query<{ name: string }>(
+        'select name from services order by sort',
+      );
+      assert.ok(pub.rows.some((r) => r.name === 'Baño medicado'));
+      await assert.rejects(db.query('select price from services'));
+      await db.exec('reset role');
+      await db.exec('alter table appointments disable trigger check_appointment');
+      await assert.rejects(
+        db.query(
+          `insert into appointments(pet_id,starts_at,reason) values($1,now()+interval '3 days','Masaje')`,
+          [pet],
+        ),
+        /servicio/,
+      );
+      // Surgery is not bookable online, but staff can schedule it.
+      await assert.rejects(
+        db.query(
+          `insert into appointments(pet_id,starts_at,reason,source) values($1,now()+interval '3 days','Cirugía','web')`,
+          [pet],
+        ),
+        /servicio/,
+      );
+      await db.query(
+        `insert into appointments(pet_id,starts_at,reason) values($1,now()+interval '3 days','Cirugía')`,
+        [pet],
+      );
+      await db.exec('alter table appointments enable trigger check_appointment');
+    },
+  );
+
+  await t.test(
+    'cash register: open, charge, expenses, close with count and void rules',
+    async () => {
+      await db.exec('reset role');
+      const cashier = '10000000-0000-4000-8000-000000000020',
+        boss = '10000000-0000-4000-8000-000000000021',
+        doctor = '10000000-0000-4000-8000-000000000022';
+      await db.exec(
+        `insert into auth.users(id) values ('${cashier}'),('${boss}'),('${doctor}');insert into staff(user_id,name,role) values ('${cashier}','Caja','reception'),('${boss}','Jefa','admin'),('${doctor}','Doc','vet');`,
+      );
+      const bath = (
+        await db.query<{ id: string }>(
+          "update services set price=35 where name='Baño medicado' returning id",
+        )
+      ).rows[0].id;
+      await db.exec('alter table appointments disable trigger check_appointment');
+      const visit = (
+        await db.query<{ id: string }>(
+          `insert into appointments(pet_id,starts_at,reason,status) values($1,now()-interval '2 hours','Baño medicado','completed') returning id`,
+          [pet],
+        )
+      ).rows[0].id;
+      await db.exec('alter table appointments enable trigger check_appointment');
+      const items = JSON.stringify([
+        { service_id: bath, description: 'Baño medicado', quantity: 1, unit_price: 35 },
+        { service_id: null, description: 'Champú extra', quantity: 2, unit_price: 7.5 },
+      ]);
+      const pay = (appointment: string | null, method = 'Efectivo', discount = 0) =>
+        db.query<{ id: string; total: string; number: string; client_id: string }>(
+          'select * from create_payment($1,null,null,$2::jsonb,$3,$4,$5)',
+          [appointment, items, discount, method, ''],
+        );
+
+      await asUser(doctor);
+      await assert.rejects(db.query('select open_cash_session(100)'), /permiso/);
+      assert.equal((await db.query('select * from payments')).rows.length, 0);
+
+      await asUser(cashier);
+      await assert.rejects(pay(visit), /Abre la caja/);
+      await db.query('select open_cash_session(100)');
+      await assert.rejects(db.query('select open_cash_session(50)'), /ya está abierta/);
+      await assert.rejects(pay(visit, 'Efectivo', 60), /descuento/);
+      const first = (await pay(visit, 'Efectivo', 5)).rows[0];
+      assert.equal(Number(first.total), 45, '35 + 2 x 7.50 - 5');
+      assert.equal(first.client_id, client, 'client taken from the appointment');
+      await assert.rejects(pay(visit), /ya fue cobrada/);
+      await pay(null, 'Yape/Plin');
+      await assert.rejects(
+        db.query("insert into payments(session_id,subtotal,total,method,created_by) select id,1,1,'Efectivo',auth.uid() from cash_sessions"),
+        'no direct writes',
+      );
+      await db.query(
+        "select create_expense(current_date,'Insumos','Guantes',12.5,'Efectivo')",
+      );
+      await db.query(
+        "select create_expense(current_date,'Alquiler','Local',800,'Transferencia')",
+      );
+      // Expected cash: 100 opening + 45 cash payment - 12.50 cash expense.
+      const closed = (
+        await db.query<{ expected_cash: string; counted_cash: string }>(
+          "select * from close_cash_session(130,'')",
+        )
+      ).rows[0];
+      assert.equal(Number(closed.expected_cash), 132.5);
+      assert.equal(Number(closed.counted_cash), 130);
+      await assert.rejects(
+        db.query("select void_payment($1,'Error de cobro')", [first.id]),
+        /administrador/,
+      );
+      await asUser(boss);
+      await db.query("select void_payment($1,'Error de cobro')", [first.id]);
+      await db.exec('reset role');
+      const after = (
+        await db.query<{ status: string }>('select status from payments where id=$1', [first.id])
+      ).rows[0];
+      assert.equal(after.status, 'void');
     },
   );
 
