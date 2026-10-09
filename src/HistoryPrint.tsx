@@ -38,6 +38,22 @@ export default function HistoryPrint({
   const now = new Date().toISOString();
   return createPortal(
     <div className="history-print" aria-hidden="true">
+      {/* Page margins are 0 so the browser adds no header/footer (URL, date); the empty
+          thead/tfoot repeat on every printed page and act as top/bottom margins. */}
+      <table className="print-frame">
+        <thead>
+          <tr>
+            <td className="print-space" />
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td className="print-space" />
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td className="print-body">
       <header>
         {clinic.logo_url && <img src={clinic.logo_url} alt="" />}
         <div>
@@ -120,6 +136,10 @@ export default function HistoryPrint({
         Generado el {dateLabel(now)} {clock(now)} por {author}. Documento con datos clínicos
         confidenciales.
       </footer>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>,
     document.body,
   );

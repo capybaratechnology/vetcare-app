@@ -78,6 +78,15 @@ test('PostgreSQL schema, staff permissions, booking transaction and reminder cla
     ),
   );
   // 202610080002_realtime_cash.sql only alters the Supabase publication.
+  await db.exec(
+    await readFile(
+      new URL(
+        '../supabase/migrations/202610090001_merge_clients_payments.sql',
+        import.meta.url,
+      ),
+      'utf8',
+    ),
+  );
   const admin = '10000000-0000-4000-8000-000000000001',
     reception = '10000000-0000-4000-8000-000000000002',
     stranger = '10000000-0000-4000-8000-000000000003';
@@ -817,6 +826,53 @@ test('PostgreSQL schema, staff permissions, booking transaction and reminder cla
         await db.query<{ status: string }>('select status from payments where id=$1', [first.id])
       ).rows[0];
       assert.equal(after.status, 'void');
+    },
+  );
+
+  await t.test(
+    'merging clients moves their payments to the kept client and pet',
+    async () => {
+      await db.exec('reset role');
+      const id = async (sql: string, params: unknown[] = []) =>
+        (await db.query<{ id: string }>(sql, params)).rows[0].id;
+      const rocio = await id(
+        `insert into clients(name,phone,consent,created_at) values('Rocio Alvan','+51964087862',true,now()-interval '1 day') returning id`,
+      );
+      const yumi = await id(
+        `insert into clients(name,phone,consent) values('Yumi','+51964087862',true) returning id`,
+      );
+      const flopo = await id(
+        `insert into pets(client_id,name,species) values($1,'Flopo','Perro') returning id`,
+        [rocio],
+      );
+      const flopoDup = await id(
+        `insert into pets(client_id,name,species) values($1,'Flopo','Perro') returning id`,
+        [yumi],
+      );
+      const boss = '10000000-0000-4000-8000-000000000021';
+      await asUser(boss);
+      await db.query('select open_cash_session(0)');
+      const items = JSON.stringify([
+        { service_id: null, description: 'Baño', quantity: 1, unit_price: 30 },
+      ]);
+      const paid = await id(
+        `select id from create_payment(null,null,$1,$2::jsonb,0,'Efectivo','')`,
+        [flopoDup, items],
+      );
+      await db.query('select merge_clients($1,$2,true)', [rocio, yumi]);
+      await db.exec('reset role');
+      const row = (
+        await db.query<{ pet_id: string; client_id: string }>(
+          'select pet_id,client_id from payments where id=$1',
+          [paid],
+        )
+      ).rows[0];
+      assert.deepEqual(row, { pet_id: flopo, client_id: rocio });
+      assert.equal(
+        (await db.query('select 1 from pets where id=$1', [flopoDup])).rows.length,
+        0,
+        'duplicate Flopo removed',
+      );
     },
   );
 

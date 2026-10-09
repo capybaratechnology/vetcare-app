@@ -26,7 +26,6 @@ import ContentCutOutlined from '@mui/icons-material/ContentCutOutlined';
 import Pets from '@mui/icons-material/Pets';
 import { supabase } from './data';
 import { Brand, ClinicLogo, type Clinic } from './clinic';
-import { ColorModeToggle } from './colorMode';
 import {
   TIMEZONE,
   localDate,
@@ -122,7 +121,8 @@ export default function Landing({
     [error, setError] = useState(''),
     [result, setResult] = useState('');
   const [name, setName] = useState(''),
-    [phone, setPhone] = useState(''),
+    // Peru prefix prefilled; it can be erased for numbers from other countries.
+    [phone, setPhone] = useState('+51'),
     [petName, setPetName] = useState(''),
     [species, setSpecies] = useState('Perro'),
     [pickedReason, setReason] = useState(''),
@@ -290,7 +290,7 @@ export default function Landing({
     setStep(0);
     setResult('');
     setName('');
-    setPhone('');
+    setPhone('+51');
     setPetName('');
     setSlot('');
     setConsent(false);
@@ -317,7 +317,6 @@ export default function Landing({
           >
             Nuestros cuidados
           </a>
-          <ColorModeToggle />
           <Button onClick={() => navigate('login')}>Acceso del equipo</Button>
           <Button variant="contained" onClick={begin}>
             Reservar cita
@@ -527,9 +526,14 @@ export default function Landing({
                       onChange={(e) =>
                         setPhone(e.target.value.replace(/\s/g, ''))
                       }
+                      onFocus={(e) => {
+                        // Caret after the prefilled +51, ready to type the number.
+                        const end = e.target.value.length;
+                        e.target.setSelectionRange(end, end);
+                      }}
                       slotProps={{ htmlInput: { maxLength: 16 } }}
                     />
-                    <p className="muted">Incluye + y el código de país.</p>
+                    <p className="muted">Ya está el código de Perú (+51); escribe tu número a continuación. Si es de otro país, cambia el código.</p>
                   </>
                 )}
                 {step === 2 && (

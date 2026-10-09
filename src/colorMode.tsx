@@ -18,11 +18,21 @@ function initial(): ColorMode {
     : 'light';
 }
 let mode: ColorMode = typeof window === 'undefined' ? 'light' : initial();
+// Pages that always show in light mode (the public landing), without changing the saved choice.
+let forcedLight = false;
+const effective = (): ColorMode => (forcedLight ? 'light' : mode);
 function apply() {
-  document.documentElement.dataset.theme = mode;
+  const m = effective();
+  document.documentElement.dataset.theme = m;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', mode === 'dark' ? '#11131b' : '#0b1a6e');
+    ?.setAttribute('content', m === 'dark' ? '#11131b' : '#0b1a6e');
+}
+export function setForcedLight(on: boolean) {
+  if (forcedLight === on) return;
+  forcedLight = on;
+  apply();
+  listeners.forEach((l) => l());
 }
 if (typeof document !== 'undefined') apply();
 export function useColorMode() {
@@ -31,7 +41,7 @@ export function useColorMode() {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    () => mode,
+    effective,
     () => 'light' as ColorMode,
   );
 }

@@ -530,5 +530,11 @@ export function mergeClientsLocal(
     appointments: repoint(data.appointments),
     medical_records: repoint(data.medical_records),
     controls: repoint(data.controls),
+    // Payments follow the kept client and pet, as in the database function.
+    payments: data.payments.map((p) => ({
+      ...p,
+      client_id: p.client_id === mergeId ? keepId : p.client_id,
+      pet_id: p.pet_id && moved[p.pet_id] ? moved[p.pet_id] : p.pet_id,
+    })),
   };
 }

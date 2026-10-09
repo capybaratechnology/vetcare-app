@@ -71,7 +71,9 @@ import Users from './Users';
 import Settings from './Settings';
 import MergeClients from './MergeClients';
 import MonthCalendar, { type DayCount } from './MonthCalendar';
-import { ColorModeToggle } from './colorMode';
+import { ClientPicker, PetPicker } from './Pickers';
+import ClientPets, { blankPet, petToDraft, type PetDraft } from './ClientPets';
+import { ColorModeToggle, setForcedLight } from './colorMode';
 import Services from './Services';
 import Cash from './Cash';
 import Expenses from './Expenses';
@@ -219,6 +221,10 @@ export default function App() {
       alive = false;
     };
   }, []);
+  // The public landing always shows in light mode; the staff's saved choice applies elsewhere.
+  useEffect(() => {
+    setForcedLight(page === 'landing');
+  }, [page]);
   useEffect(() => {
     document.title = clinic.name + ' · Gestión veterinaria';
   }, [clinic.name]);
@@ -434,6 +440,7 @@ export default function App() {
   const pet = (id: string) => data.pets.find((p) => p.id === id);
   const owner = (id: string) => data.clients.find((c) => c.id === id);
   const duplicates = duplicateGroups(data.clients);
+  const editingClient = page === 'Clientes' && form?.table === 'clients';
   async function mergeClients(keepId: string, mergePets: boolean) {
     const others = (duplicates.get(mergePhone) || []).filter(
       (c) => c.id !== keepId,
@@ -559,7 +566,7 @@ export default function App() {
   ) {
     setFormError('');
     const defaults: Record<Table, Record<string, unknown>> = {
-      clients: { name: '', phone: '', email: '', consent: false },
+      clients: { name: '', phone: '+51', email: '', consent: false },
       pets: {
         client_id: '',
         name: '',
@@ -600,7 +607,23 @@ export default function App() {
       payment_items: {},
       expenses: {},
     };
-    setForm({ table, id, values: { ...defaults[table], ...values } });
+    if (table === 'clients') window.scrollTo({ top: 0 });
+    setForm({
+      table,
+      id,
+      values: {
+        ...defaults[table],
+        // The client form also manages their pets: registered ones when editing, a blank one when new.
+        ...(table === 'clients'
+          ? {
+              pets: id
+                ? data.pets.filter((p) => p.client_id === id).map(petToDraft)
+                : [blankPet()],
+            }
+          : {}),
+        ...values,
+      },
+    });
   }
   async function persist(
     table: Table,
@@ -631,6 +654,14 @@ export default function App() {
       delete row.id;
       delete row.created_at;
       delete row.author_id;
+      if (form.table === 'pets' && !row.client_id)
+        throw Error('Elige el cliente responsable.');
+      if (
+        !form.id &&
+        ['appointments', 'medical_records', 'controls'].includes(form.table) &&
+        !row.pet_id
+      )
+        throw Error('Elige la mascota.');
       if (form.table === 'clients' && !validPhone(String(row.phone)))
         throw Error('Usa el formato internacional: +51987654321.');
       if (form.table === 'pets') {
@@ -683,6 +714,89 @@ export default function App() {
               source: 'staff',
             };
         await persist(form.table, payload, form.id);
+      } else if (form.table === 'clients') {
+        // Client plus the pets edited in the same form: new blocks without a name are skipped.
+        const drafts = (row.pets as PetDraft[] | undefined) || [];
+        delete row.pets;
+        if (drafts.some((p) => p.id && !p.name.trim()))
+          throw Error('Una mascota registrada no puede quedar sin nombre.');
+        const pets = drafts.filter((p) => p.name.trim());
+        for (const p of pets) {
+          if (p.birth_date && p.birth_date > today)
+            throw Error(p.name + ': la fecha de nacimiento no puede ser futura.');
+          if (p.weight && !(Number(p.weight) > 0 && Number(p.weight) < 2000))
+            throw Error(p.name + ': revisa el peso.');
+        }
+        const saved = (await persist('clients', row, form.id)) as { id: string };
+        const clientId = form.id || saved.id;
+        const toRow = (p: PetDraft) => ({
+          client_id: clientId,
+          name: p.name.trim(),
+          species: p.species,
+          breed: p.breed.trim(),
+          sex: p.sex,
+          birth_date: p.birth_date || null,
+          weight: p.weight ? Number(p.weight) : null,
+          allergies: p.allergies,
+        });
+        const petRows = pets.filter((p) => !p.id).map(toRow);
+        // Registered pets: only the ones whose data changed are updated.
+        const changed = pets.filter((p) => {
+          if (!p.id) return false;
+          const before = data.pets.find((x) => x.id === p.id);
+          return !before || JSON.stringify(petToDraft(before)) !== JSON.stringify({ ...p, key: p.id });
+        });
+        if (petRows.length || changed.length) {
+          if (demo)
+            setData((d) => ({
+              ...d,
+              pets: [
+                ...d.pets.map((x) => {
+                  const c = changed.find((p) => p.id === x.id);
+                  return c ? { ...x, ...toRow(c) } : x;
+                }),
+                ...petRows.map((r) => ({ ...r, id: crypto.randomUUID() })),
+              ],
+            }));
+          else {
+            let error = petRows.length
+              ? (await supabase!.from('pets').insert(petRows)).error
+              : null;
+            for (const p of changed) {
+              if (error) break;
+              const { client_id: _owner, ...fields } = toRow(p);
+              error = (await supabase!.from('pets').update(fields).eq('id', p.id!)).error;
+            }
+            await reload();
+            if (error) {
+              // The client exists already: close so a retry does not duplicate it.
+              setForm(null);
+              setSnack(
+                'Cliente guardado, pero no todas sus mascotas (' +
+                  errText(error) +
+                  '). Regístralas en Mascotas.',
+              );
+              return;
+            }
+          }
+        }
+        setForm(null);
+        setSnack(
+          (form.id ? 'Cliente actualizado' : 'Cliente registrado') +
+            (petRows.length
+              ? ' · ' +
+                petRows.length +
+                (petRows.length === 1 ? ' mascota nueva' : ' mascotas nuevas')
+              : '') +
+            (changed.length
+              ? ' · ' +
+                changed.length +
+                (changed.length === 1 ? ' mascota actualizada' : ' mascotas actualizadas')
+              : '') +
+            '.' +
+            (demo ? ' Se restablece al recargar.' : ''),
+        );
+        return;
       } else await persist(form.table, row, form.id);
       setForm(null);
       setSnack(
@@ -752,17 +866,18 @@ export default function App() {
   );
   const options = (values: string[]) =>
     values.map((value) => ({ value, label: value }));
-  const petField = () =>
-    field(
-      'pet_id',
-      'Mascota',
-      'text',
-      true,
-      data.pets.map((p) => ({
-        value: p.id,
-        label: p.name + ' · ' + owner(p.client_id)?.name,
-      })),
-    );
+  // Searchable by pet, owner or phone: dropdowns do not scale to hundreds of clients.
+  const setValue = (name: string, value: unknown) =>
+    setForm((f) => (f ? { ...f, values: { ...f.values, [name]: value } } : f));
+  const petField = () => (
+    <PetPicker
+      pets={data.pets}
+      clients={data.clients}
+      value={(form?.values.pet_id as string) || ''}
+      onChange={(id) => setValue('pet_id', id)}
+      required
+    />
+  );
   function appointmentRow(a: Data['appointments'][number]) {
     const p = pet(a.pet_id);
     return (
@@ -873,6 +988,41 @@ export default function App() {
         <p>Elige otro día o registra una nueva cita.</p>
         <Button onClick={() => open('appointments')}>Registrar cita</Button>
       </div>
+    );
+  }
+  // Client form as a page (not a dialog): a client may have many pets.
+  function clientFields() {
+    if (!form) return null;
+    return (
+      <>
+        {field('name', 'Nombre completo')}
+        {field('phone', 'WhatsApp / Teléfono internacional', 'tel')}
+        {field('email', 'Correo electrónico', 'email', false)}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={Boolean(form.values.consent)}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  values: {
+                    ...form.values,
+                    consent: e.target.checked,
+                  },
+                })
+              }
+            />
+          }
+          label="El cliente autorizó recordatorios de citas por WhatsApp."
+        />
+        {Array.isArray(form.values.pets) && (
+          <ClientPets
+            pets={(form.values.pets as PetDraft[]) || []}
+            today={today}
+            onChange={(pets) => setValue('pets', pets)}
+          />
+        )}
+      </>
     );
   }
   // Hours of the selected day: opening-hours slots plus any appointment outside them.
@@ -1196,6 +1346,7 @@ export default function App() {
               'Reportes',
               'Servicios',
             ].includes(page) &&
+              !editingClient &&
               canAccess(role, page) && (
               <Button
                 disabled={!!supabase && !role}
@@ -1403,7 +1554,7 @@ export default function App() {
             </>
           ) : (
             <>
-              <div className="toolbar">
+              <div className="toolbar" hidden={editingClient}>
                 <TextField
                   placeholder={
                     page === 'Clientes'
@@ -1442,7 +1593,38 @@ export default function App() {
                     }}
                   />
                 ))}
-              {page === 'Clientes' && duplicates.size > 0 && (
+              {editingClient && (
+                <section className="panel client-form-page">
+                  <form onSubmit={submit}>
+                    <div className="day-nav">
+                      <Button
+                        startIcon={<ArrowBack />}
+                        onClick={() => setForm(null)}
+                        disabled={saving}
+                      >
+                        Volver a clientes
+                      </Button>
+                    </div>
+                    <h2>{form.id ? 'Editar cliente' : 'Nuevo cliente'}</h2>
+                    <div className="form-grid client-form-grid">
+                      {formError && <Alert severity="error">{formError}</Alert>}
+                      {clientFields()}
+                    </div>
+                    <div className="form-actions-bar">
+                      {formError && (
+                        <span className="form-actions-error">{formError}</span>
+                      )}
+                      <Button onClick={() => setForm(null)} disabled={saving}>
+                        Cancelar
+                      </Button>
+                      <Button type="submit" variant="contained" disabled={saving}>
+                        {saving ? 'Guardando…' : 'Guardar'}
+                      </Button>
+                    </div>
+                  </form>
+                </section>
+              )}
+              {page === 'Clientes' && !editingClient && duplicates.size > 0 && (
                 <Alert severity="warning" sx={{ mb: 2 }}>
                   {duplicates.size === 1
                     ? 'Hay 1 celular registrado en más de una ficha.'
@@ -1453,7 +1635,7 @@ export default function App() {
                   une las que sean del mismo cliente con «Unir».
                 </Alert>
               )}
-              {page === 'Clientes' && (
+              {page === 'Clientes' && !editingClient && (
                 <section className="panel table-panel">
                   <TableContainer>
                     <MuiTable className="users-table clients-table">
@@ -1753,7 +1935,7 @@ export default function App() {
         </div>
       </main>
       <Dialog
-        open={!!form}
+        open={!!form && form.table !== 'clients'}
         fullWidth
         maxWidth="sm"
       >
@@ -1782,39 +1964,15 @@ export default function App() {
           <DialogContent>
             <div className="form-grid">
               {formError && <Alert severity="error">{formError}</Alert>}
-              {form?.table === 'clients' && (
-                <>
-                  {field('name', 'Nombre completo')}
-                  {field('phone', 'WhatsApp / Teléfono internacional', 'tel')}
-                  {field('email', 'Correo electrónico', 'email', false)}
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={Boolean(form.values.consent)}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            values: {
-                              ...form.values,
-                              consent: e.target.checked,
-                            },
-                          })
-                        }
-                      />
-                    }
-                    label="El cliente autorizó recordatorios de citas por WhatsApp."
-                  />
-                </>
-              )}
               {form?.table === 'pets' && (
                 <>
-                  {field(
-                    'client_id',
-                    'Cliente responsable',
-                    'text',
-                    true,
-                    data.clients.map((c) => ({ value: c.id, label: c.name })),
-                  )}
+                  <ClientPicker
+                    clients={data.clients}
+                    pets={data.pets}
+                    value={(form.values.client_id as string) || ''}
+                    onChange={(id) => setValue('client_id', id)}
+                    required
+                  />
                   {!data.clients.length && (
                     <Alert severity="info">Registra primero un cliente.</Alert>
                   )}
@@ -1870,7 +2028,7 @@ export default function App() {
                     options([
                       ...new Set([
                         ...activeServices.map((x) => x.name),
-                        ...(form.values.reason ? [String(form.values.reason)] : []),
+                        ...(form.values.reason ? [form.values.reason as string] : []),
                       ]),
                     ]),
                   )}

@@ -2226,6 +2226,7 @@ a:focus-visible {
   body.print-receipt .receipt-sheet {
     display: block;
     width: 72mm;
+    padding: 6mm;
     color: #000;
     font: 10pt/1.4 'Segoe UI', Arial, sans-serif;
   }
@@ -2355,9 +2356,26 @@ tr.is-void td:last-child {
   display: none;
 }
 @media print {
+  /* No page margins: the browser then prints no header/footer (URL, date, title).
+     Documents add their own margins (history: .print-frame, receipt: padding). */
   @page {
     size: A4;
-    margin: 14mm;
+    margin: 0;
+  }
+  .history-print .print-frame,
+  .history-print .print-frame > * > tr > td {
+    border: 0;
+    padding: 0;
+    background: none;
+  }
+  .history-print .print-frame {
+    width: 100%;
+  }
+  .history-print .print-space {
+    height: 14mm;
+  }
+  .history-print .print-body {
+    padding: 0 14mm !important;
   }
   /* Paper is always white, also when the app is in dark mode. */
   :root {
@@ -2467,4 +2485,91 @@ tr.is-void td:last-child {
   .charge-cash {
     max-width: none;
   }
+}
+.picker-option {
+  display: grid;
+  line-height: 1.3;
+}
+.picker-option small {
+  color: var(--c-72817e);
+}
+.charge-pet {
+  margin: 8px 0 16px;
+}
+.client-pets h3 {
+  margin: 8px 0 10px;
+  font-size: 1rem;
+}
+.client-pet {
+  position: relative;
+  border: 1px solid var(--c-e2e9e5);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 14px;
+}
+.client-pet legend {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  color: var(--c-72817e);
+}
+.client-pet-remove.MuiIconButton-root {
+  position: absolute;
+  top: -14px;
+  right: 8px;
+  background: var(--c-ffffff);
+}
+/* Client form as a page: room for many pets, actions always reachable. */
+.client-form-page h2 {
+  margin: 4px 0 6px;
+}
+.client-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.client-form-grid > .MuiAlert-root,
+.client-form-grid > .MuiFormControlLabel-root,
+.client-form-grid > .client-pets {
+  grid-column: 1 / -1;
+}
+.client-pets-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.client-pets-list .client-pet {
+  margin: 0;
+}
+.form-actions-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin: 18px -24px -24px;
+  padding: 12px 24px;
+  background: var(--c-ffffff);
+  border-top: 1px solid var(--c-e2e9e5);
+  border-radius: 0 0 15px 15px;
+}
+.form-actions-error {
+  margin-right: auto;
+  color: var(--c-b55235);
+  font-size: 0.85rem;
+}
+@media (max-width: 900px) {
+  .client-form-grid,
+  .client-pets-list {
+    grid-template-columns: 1fr;
+  }
+  .form-actions-bar {
+    margin: 18px -18px -18px;
+    padding: 12px 18px;
+  }
+}
+.toolbar[hidden] {
+  display: none;
 }

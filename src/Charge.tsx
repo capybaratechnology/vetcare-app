@@ -17,6 +17,7 @@ import PrintOutlined from '@mui/icons-material/PrintOutlined';
 import { clock, dateLabel, localDate, type Data, type Payment } from './domain';
 import { PAYMENT_METHODS, round2, soles, type ChargeItem, type MoneyCall } from './money';
 import type { Clinic } from './clinic';
+import { PetPicker } from './Pickers';
 type Line = ChargeItem & { key: string };
 const newLine = (): Line => ({
   key: crypto.randomUUID(),
@@ -123,20 +124,15 @@ export function ChargeDialog({
             {dateLabel(localDate(new Date(appt.starts_at)))} {clock(appt.starts_at)}
           </Alert>
         ) : (
-          <TextField
-            select
-            label="Mascota (opcional)"
-            value={petId}
-            onChange={(e) => setPetId(e.target.value)}
-            sx={{ mb: 2, mt: 1 }}
-          >
-            <MenuItem value="">Sin mascota · venta directa</MenuItem>
-            {data.pets.map((p) => (
-              <MenuItem key={p.id} value={p.id}>
-                {owner(p.id)}
-              </MenuItem>
-            ))}
-          </TextField>
+          <div className="charge-pet">
+            <PetPicker
+              pets={data.pets}
+              clients={data.clients}
+              value={petId}
+              onChange={setPetId}
+              label="Mascota (opcional · vacío = venta directa)"
+            />
+          </div>
         )}
         <div className="charge-lines">
           {lines.map((l) => {
